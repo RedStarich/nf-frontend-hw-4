@@ -1,77 +1,62 @@
-/**
- * v0 by Vercel.
- * @see https://v0.dev/t/fmzOHpMmdH5
- * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
- */
-import Link from "next/link"
+'use client';
+import React from 'react';
+import axios from 'axios';
+import { useQuery } from 'react-query';
 
-export default function Component() {
-  
-  const products = [
-    {
-      id: 1,
-      image: "/placeholder.svg",
-      title: "Bamboo Cutting Board",
-      price: 19.99,
-    },
-    {
-      id: 2,
-      image: "/placeholder.svg",
-      title: "Reusable Tote Bag",
-      price: 12.99,
-    },
-    {
-      id: 3,
-      image: "/placeholder.svg",
-      title: "Organic Cotton T-Shirt",
-      price: 24.99,
-    },
-    {
-      id: 4,
-      image: "/placeholder.svg",
-      title: "Stainless Steel Water Bottle",
-      price: 16.99,
-    },
-    {
-      id: 5,
-      image: "/placeholder.svg",
-      title: "Bamboo Utensil Set",
-      price: 9.99,
-    },
-    {
-      id: 6,
-      image: "/placeholder.svg",
-      title: "Recycled Glass Vase",
-      price: 14.99,
-    },
-  ]
-  return (
-    <div className="flex flex-col min-h-[100dvh] bg-[#f0f0f0] dark:bg-[#1a1a1a]">
-      <main className="flex-1 py-12 px-4 md:px-6">
-        <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-          {products.map((product) => (
-            <div key={product.id} className="bg-white dark:bg-[#262626] rounded-lg overflow-hidden shadow-lg">
-              <img
-                src="/placeholder.svg"
-                alt={product.title}
-                width={300}
-                height={200}
-                className="w-full h-48 object-cover"
-              />
-              <div className="p-4">
-                <h3 className="text-lg font-bold text-[#1a1a1a] dark:text-white">{product.title}</h3>
-                <p className="text-[#4a4a4a] dark:text-[#b3b3b3] font-medium">${product.price}</p>
-                <a
-                  href="#"
-                  className="inline-block bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md w-full mt-4"
-                >
-                  Buy Now
-                </a>
-              </div>
-            </div>
-          ))}
-        </div>
-      </main>
-    </div>
-  )
+interface ProductProps {
+  product: {
+    name: string;
+    title: string;
+    price: number;
+    description: string;
+    image: string;
+    category: string;
+  };
 }
+
+const Product: React.FC<ProductProps> = ({ product }) => {
+  return (
+    <div className="bg-gray-100 border border-gray-300 rounded-lg shadow-md p-4 w-1/3 mx-2 mb-4 text-center transition-transform hover:scale-105">
+      <img
+            src={product.image}
+            alt={product.title}
+            width={400}
+            height={300}
+            className="w-full h-60 object-cover"
+          />
+      <div className="p-4">
+            <h3 className="font-bold text-lg mb-2">{product.title}</h3>
+            <p className="text-gray-500 text-sm mb-4">{product.description}</p>
+            <div className="flex items-center justify-between">
+              <span className="font-semibold text-lg">${product.price.toFixed(2)}</span>
+              <button>Buy Now</button>
+            </div>
+        </div>
+    </div>
+  );
+};
+
+const Products: React.FC = () => {
+  const { data, isLoading, isError } = useQuery('products', async () => {
+    const response = await axios.get('https://fakestoreapi.com/products/');
+    return response.data;
+  });
+
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error: Something went wrong</div>;
+
+  return (
+    <div>
+      <h1>All products</h1>
+      <div>
+        {data.map((product: any) => (
+          <div className="bg-white rounded-lg shadow-lg overflow-hidden transition-transform duration-300 ease-in-out hover:-translate-y-2 hover:shadow-xl" key={product.name}>
+            <Product product={product} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default Products;
