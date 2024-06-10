@@ -3,10 +3,8 @@
 export default function Home() {
   return (
     <main>
-      <div>
-        <h1 className="text-7xl py-[25px] text-center font-bold">Welcome to OLX!</h1>
-
-{/* //  Fetch all products using React Query */}
+      <div className="size-full">
+        <h1 className="text-3xl md:text-7xl py-[25px] text-center font-bold min-h-96">Welcome to OLX!</h1>
       </div>
     </main>
   );
